@@ -3,167 +3,207 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Digital Media – Welcome</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <title>Eagle Pong</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Playfair Display', Georgia, serif;
-      background: transparent;
+      background: #0a0a0a;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 1.5rem;
+      font-family: 'Courier New', monospace;
     }
 
-    .mascot-wrapper {
+    .game-container {
+      background: #0d2818;
+      border: 4px solid #1a4d2e;
+      box-shadow: inset 0 0 60px rgba(0,0,0,0.5), 0 0 20px rgba(0,0,0,0.5);
+      padding: 8px;
+      border-radius: 4px;
+    }
+
+    .score-bar {
       display: flex;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      justify-content: center;
-      gap: 2rem;
-      max-width: 90vw;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: #0a1f12;
+      color: #7cfc00;
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 4px;
     }
 
-    .character-column {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .eagle-link {
-      display: inline-block;
-      transition: transform 0.25s ease;
-      line-height: 0;
-    }
-
-    .eagle-link:hover {
-      transform: scale(1.08);
-    }
-
-    .eagle-link:active {
-      transform: scale(1.02);
-    }
-
-    .eagle-head {
-      width: 150px;
-      height: auto;
+    canvas {
       display: block;
-      animation: headBob 1.2s ease-in-out infinite;
+      background: #0a1f12;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
     }
 
-    .ascii-body-wrap {
-      position: relative;
-      height: 120px;
-      width: 200px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: -0.5rem;
-    }
-
-    .ascii-body {
-      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    .title {
+      color: #5a9a4a;
       font-size: 14px;
-      line-height: 1.2;
-      color: #333;
-      white-space: pre;
-      text-align: center;
-      animation: bodySway 1.2s ease-in-out infinite;
-    }
-
-    .ascii-body.frame2 {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      animation: bodySwayAlt 1.2s ease-in-out infinite;
-      opacity: 0;
-    }
-
-    .ascii-body-wrap.swap .ascii-body:first-of-type {
-      opacity: 0;
-    }
-
-    .ascii-body-wrap.swap .ascii-body.frame2 {
-      opacity: 1;
-    }
-
-    @keyframes headBob {
-      0%, 100% { transform: translateY(0) rotate(-1deg); }
-      50%      { transform: translateY(4px) rotate(1deg); }
-    }
-
-    @keyframes bodySway {
-      0%, 100% { transform: translateX(0) rotate(-3deg); }
-      50%      { transform: translateX(6px) rotate(3deg); }
-    }
-
-    @keyframes bodySwayAlt {
-      0%, 100% { transform: translate(-50%, -50%) translateX(0) rotate(3deg); }
-      50%      { transform: translate(-50%, -50%) translateX(-6px) rotate(-3deg); }
-    }
-
-    .welcome-text {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-weight: 700;
-      font-size: clamp(1.25rem, 4vw, 1.75rem);
-      line-height: 1.35;
-      color: #1a1a1a;
-      max-width: 280px;
-      display: flex;
-      align-items: center;
+      margin-top: 8px;
+      letter-spacing: 2px;
     }
   </style>
 </head>
 <body>
-  <div class="mascot-wrapper">
-    <div class="character-column">
-      <a href="#" class="eagle-link" id="eagleLink" aria-label="Click to begin">
-        <img
-          src="OPA Mascot Head Large Banner Removed.png"
-          alt="Eagle mascot"
-          class="eagle-head"
-        />
-      </a>
-      <div class="ascii-body-wrap" id="asciiWrap">
-        <pre class="ascii-body" id="frame1">   \_/
-  ( o o )
-   \___/
-   / | \
-  /  |  \
-  \  |  /
-   \_/
-  /   \</pre>
-        <pre class="ascii-body frame2" id="frame2" aria-hidden="true">   \_/
-  ( o o )
-   \___/
-   \ | /
-  \  |  /
-  /  |  \
-   \_/
-  /   \</pre>
-      </div>
+  <div class="game-container">
+    <div class="score-bar">
+      <span id="scoreL">0</span>
+      <span>EAGLE PONG</span>
+      <span id="scoreR">0</span>
     </div>
-    <p class="welcome-text">Welcome to Digital Media: Click The Eagle to Begin</p>
+    <canvas id="game" width="640" height="400"></canvas>
+    <p class="title">AUTONOMOUS — WATCH THE EAGLE FLY</p>
   </div>
 
   <script>
     (function () {
-      var wrap = document.getElementById('asciiWrap');
-      if (!wrap) return;
-      setInterval(function () {
-        wrap.classList.toggle('swap');
-      }, 600);
+      var canvas = document.getElementById('game');
+      var ctx = canvas.getContext('2d');
+      var scoreL = document.getElementById('scoreL');
+      var scoreR = document.getElementById('scoreR');
+
+      var PADDLE_W = 12;
+      var PADDLE_H = 70;
+      var PADDLE_SPEED = 5;
+      var BALL_SIZE = 110;
+      var PADDLE_MARGIN = 20;
+
+      var ball = {
+        x: canvas.width / 2 - BALL_SIZE / 2,
+        y: canvas.height / 2 - BALL_SIZE / 2,
+        vx: 1.2,
+        vy: 0.9,
+        size: BALL_SIZE
+      };
+
+      var leftPaddle = {
+        x: PADDLE_MARGIN,
+        y: canvas.height / 2 - PADDLE_H / 2,
+        w: PADDLE_W,
+        h: PADDLE_H,
+        speed: PADDLE_SPEED
+      };
+
+      var rightPaddle = {
+        x: canvas.width - PADDLE_MARGIN - PADDLE_W,
+        y: canvas.height / 2 - PADDLE_H / 2,
+        w: PADDLE_W,
+        h: PADDLE_H,
+        speed: PADDLE_SPEED
+      };
+
+      var scores = { left: 0, right: 0 };
+      var eagleImg = new Image();
+      eagleImg.src = 'OPA Mascot Head Large Banner Removed.png';
+
+      function clamp(val, min, max) {
+        return Math.max(min, Math.min(max, val));
+      }
+
+      function resetBall(direction) {
+        ball.x = canvas.width / 2 - ball.size / 2;
+        ball.y = canvas.height / 2 - ball.size / 2;
+        ball.vx = direction * (1.2 + Math.random() * 0.4);
+        ball.vy = (Math.random() - 0.5) * 1.2;
+      }
+
+      function update() {
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+
+        if (ball.y <= 0) {
+          ball.y = 0;
+          ball.vy = -ball.vy;
+        }
+        if (ball.y >= canvas.height - ball.size) {
+          ball.y = canvas.height - ball.size;
+          ball.vy = -ball.vy;
+        }
+
+        var ballCenterY = ball.y + ball.size / 2;
+        var ballCenterX = ball.x + ball.size / 2;
+
+        leftPaddle.y = clamp(
+          leftPaddle.y + (ballCenterY - (leftPaddle.y + leftPaddle.h / 2)) * 0.04,
+          0,
+          canvas.height - leftPaddle.h
+        );
+        rightPaddle.y = clamp(
+          rightPaddle.y + (ballCenterY - (rightPaddle.y + rightPaddle.h / 2)) * 0.04,
+          0,
+          canvas.height - rightPaddle.h
+        );
+
+        if (ball.vx < 0 && ballCenterX - ball.size / 2 <= leftPaddle.x + leftPaddle.w &&
+            ballCenterX + ball.size / 2 >= leftPaddle.x &&
+            ballCenterY >= leftPaddle.y && ballCenterY <= leftPaddle.y + leftPaddle.h) {
+          ball.vx = -ball.vx;
+          ball.x = leftPaddle.x + leftPaddle.w + 2;
+          ball.vy += (ballCenterY - (leftPaddle.y + leftPaddle.h / 2)) * 0.025;
+        }
+        if (ball.vx > 0 && ballCenterX + ball.size / 2 >= rightPaddle.x &&
+            ballCenterX - ball.size / 2 <= rightPaddle.x + rightPaddle.w &&
+            ballCenterY >= rightPaddle.y && ballCenterY <= rightPaddle.y + rightPaddle.h) {
+          ball.vx = -ball.vx;
+          ball.x = rightPaddle.x - ball.size - 2;
+          ball.vy += (ballCenterY - (rightPaddle.y + rightPaddle.h / 2)) * 0.025;
+        }
+
+        if (ball.x + ball.size < 0) {
+          scores.right++;
+          scoreR.textContent = scores.right;
+          resetBall(1);
+        }
+        if (ball.x > canvas.width) {
+          scores.left++;
+          scoreL.textContent = scores.left;
+          resetBall(-1);
+        }
+
+        var maxVy = 2;
+        ball.vy = clamp(ball.vy, -maxVy, maxVy);
+      }
+
+      function draw() {
+        ctx.fillStyle = '#0a1f12';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.strokeStyle = '#1a4d2e';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([8, 8]);
+        ctx.beginPath();
+        ctx.moveTo(canvas.width / 2, 0);
+        ctx.lineTo(canvas.width / 2, canvas.height);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = '#7cfc00';
+        ctx.fillRect(leftPaddle.x, leftPaddle.y, leftPaddle.w, leftPaddle.h);
+        ctx.fillRect(rightPaddle.x, rightPaddle.y, rightPaddle.w, rightPaddle.h);
+
+        if (eagleImg.complete && eagleImg.naturalWidth) {
+          ctx.drawImage(eagleImg, ball.x, ball.y, ball.size, ball.size);
+        } else {
+          ctx.fillStyle = '#7cfc00';
+          ctx.beginPath();
+          ctx.arc(ball.x + ball.size / 2, ball.y + ball.size / 2, ball.size / 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        update();
+        requestAnimationFrame(draw);
+      }
+
+      resetBall(Math.random() > 0.5 ? 1 : -1);
+      eagleImg.onload = function () { requestAnimationFrame(draw); };
+      if (eagleImg.complete) requestAnimationFrame(draw);
     })();
   </script>
 </body>
