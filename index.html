@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Media – Welcome</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Playfair Display', Georgia, serif;
+      background: transparent;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .mascot-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 2rem;
+      max-width: 90vw;
+    }
+
+    .character-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .eagle-link {
+      display: inline-block;
+      transition: transform 0.25s ease;
+      line-height: 0;
+    }
+
+    .eagle-link:hover {
+      transform: scale(1.08);
+    }
+
+    .eagle-link:active {
+      transform: scale(1.02);
+    }
+
+    .eagle-head {
+      width: 150px;
+      height: auto;
+      display: block;
+      animation: headBob 1.2s ease-in-out infinite;
+    }
+
+    .ascii-body-wrap {
+      position: relative;
+      height: 120px;
+      width: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: -0.5rem;
+    }
+
+    .ascii-body {
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.2;
+      color: #333;
+      white-space: pre;
+      text-align: center;
+      animation: bodySway 1.2s ease-in-out infinite;
+    }
+
+    .ascii-body.frame2 {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      animation: bodySwayAlt 1.2s ease-in-out infinite;
+      opacity: 0;
+    }
+
+    .ascii-body-wrap.swap .ascii-body:first-of-type {
+      opacity: 0;
+    }
+
+    .ascii-body-wrap.swap .ascii-body.frame2 {
+      opacity: 1;
+    }
+
+    @keyframes headBob {
+      0%, 100% { transform: translateY(0) rotate(-1deg); }
+      50%      { transform: translateY(4px) rotate(1deg); }
+    }
+
+    @keyframes bodySway {
+      0%, 100% { transform: translateX(0) rotate(-3deg); }
+      50%      { transform: translateX(6px) rotate(3deg); }
+    }
+
+    @keyframes bodySwayAlt {
+      0%, 100% { transform: translate(-50%, -50%) translateX(0) rotate(3deg); }
+      50%      { transform: translate(-50%, -50%) translateX(-6px) rotate(-3deg); }
+    }
+
+    .welcome-text {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-weight: 700;
+      font-size: clamp(1.25rem, 4vw, 1.75rem);
+      line-height: 1.35;
+      color: #1a1a1a;
+      max-width: 280px;
+      display: flex;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="mascot-wrapper">
+    <div class="character-column">
+      <a href="#" class="eagle-link" id="eagleLink" aria-label="Click to begin">
+        <img
+          src="OPA Mascot Head Large Banner Removed.png"
+          alt="Eagle mascot"
+          class="eagle-head"
+        />
+      </a>
+      <div class="ascii-body-wrap" id="asciiWrap">
+        <pre class="ascii-body" id="frame1">   \_/
+  ( o o )
+   \___/
+   / | \
+  /  |  \
+  \  |  /
+   \_/
+  /   \</pre>
+        <pre class="ascii-body frame2" id="frame2" aria-hidden="true">   \_/
+  ( o o )
+   \___/
+   \ | /
+  \  |  /
+  /  |  \
+   \_/
+  /   \</pre>
+      </div>
+    </div>
+    <p class="welcome-text">Welcome to Digital Media: Click The Eagle to Begin</p>
+  </div>
+
+  <script>
+    (function () {
+      var wrap = document.getElementById('asciiWrap');
+      if (!wrap) return;
+      setInterval(function () {
+        wrap.classList.toggle('swap');
+      }, 600);
+    })();
+  </script>
+</body>
+</html>
